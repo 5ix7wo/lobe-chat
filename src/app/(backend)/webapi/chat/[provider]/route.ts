@@ -16,17 +16,21 @@ export const POST = checkAuth(async (req: Request, { params, jwtPayload, createR
   const { provider } = await params;
 
   try {
+    const data = (await req.json()) as ChatStreamPayload;
+
     // ============  1. init chat model   ============ //
     let agentRuntime: AgentRuntime;
     if (createRuntime) {
       agentRuntime = createRuntime(jwtPayload);
     } else {
-      agentRuntime = await initAgentRuntimeWithUserPayload(provider, jwtPayload);
+      const { model } = data;
+      console.log('webapi/chat/[provider]/route.ts, createRuntime', createRuntime, ', jwtPayload', jwtPayload);
+      agentRuntime = await initAgentRuntimeWithUserPayload(provider, jwtPayload, { model });
     }
 
     // ============  2. create chat completion   ============ //
 
-    const data = (await req.json()) as ChatStreamPayload;
+    console.log('webapi/chat/[provider]/route.ts, data', JSON.stringify(data));
 
     const tracePayload = getTracePayload(req);
 

@@ -10,6 +10,8 @@ export type UseSendMessageParams = Pick<
   'onlyAddUserMessage' | 'isWelcomeQuestion'
 >;
 
+// chenxiang, hook 如何定义的
+
 export const useSendMessage = () => {
   const [sendMessage, updateInputMessage] = useChatStore((s) => [
     s.sendMessage,

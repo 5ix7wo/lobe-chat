@@ -58,6 +58,9 @@ const ModelSelect = memo<ModelSelectProps>(({ value, onChange, showAbility = tru
     }));
   }, [enabledList]);
 
+  console.log('===================');
+  console.log('modelSelect enabledList', enabledList);
+
   return (
     <Select
       onChange={(value, option) => {

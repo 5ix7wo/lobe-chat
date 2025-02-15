@@ -19,6 +19,7 @@ export const AiProviderSDKEnum = {
   Bedrock: 'bedrock',
   Cloudflare: 'cloudflare',
   Google: 'google',
+  HackAIGC: 'hackaigc',
   Huggingface: 'huggingface',
   Ollama: 'ollama',
   Openai: 'openai',

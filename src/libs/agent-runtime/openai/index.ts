@@ -1,3 +1,4 @@
+import { getHackRealModel } from '@/config/hackaigcModelConfig';
 import { ChatStreamPayload, ModelProvider, OpenAIChatMessage } from '../types';
 import { LobeOpenAICompatibleFactory } from '../utils/openaiCompatibleFactory';
 
@@ -27,10 +28,15 @@ export const LobeOpenAI = LobeOpenAICompatibleFactory({
   baseURL: 'https://api.openai.com/v1',
   chatCompletion: {
     handlePayload: (payload) => {
-      const { model } = payload;
+      const { model, ...others } = payload;
 
       if (o1Models.has(model)) {
         return pruneO1Payload(payload) as any;
+      }
+
+      const realModel = getHackRealModel(model);
+      if (realModel) {
+        return { ...others, model: realModel, stream: payload.stream ?? true };
       }
 
       return { ...payload, stream: payload.stream ?? true };

@@ -56,7 +56,7 @@ export const DEFAULT_FEATURE_FLAGS: IFeatureFlags = {
   openai_api_key: true,
   openai_proxy_url: true,
 
-  create_session: true,
+  create_session: false,
   edit_agent: true,
 
   plugins: true,

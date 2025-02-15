@@ -1,4 +1,5 @@
 import { getLLMConfig } from '@/config/llm';
+import { getHackModelOptions } from '@/config/hackaigcModelConfig';
 import { JWTPayload } from '@/const/auth';
 import { INBOX_SESSION_ID } from '@/const/session';
 import {
@@ -26,8 +27,9 @@ export interface AgentChatOptions {
  * @param payload - The JWT payload.
  * @returns The options object.
  */
-const getLlmOptionsFromPayload = (provider: string, payload: JWTPayload) => {
+const getLlmOptionsFromPayload = (provider: string, payload: JWTPayload, params: any) => {
   const llmConfig = getLLMConfig() as Record<string, any>;
+  const { model } = params;
 
   switch (provider) {
     default: {
@@ -41,6 +43,14 @@ const getLlmOptionsFromPayload = (provider: string, payload: JWTPayload) => {
       const baseURL = payload?.baseURL || process.env[`${upperProvider}_PROXY_URL`];
 
       return baseURL ? { apiKey, baseURL } : { apiKey };
+    }
+
+    case ModelProvider.HackAIGC: {
+      const options = getHackModelOptions(model);
+      return {
+        apiKey: options.apiKey,
+        baseURL: options.baseURL,
+      };
     }
 
     case ModelProvider.Ollama: {
@@ -116,7 +126,7 @@ export const initAgentRuntimeWithUserPayload = (
   params: any = {},
 ) => {
   return AgentRuntime.initializeWithProviderOptions(provider, {
-    [provider]: { ...getLlmOptionsFromPayload(provider, payload), ...params },
+    [provider]: { ...getLlmOptionsFromPayload(provider, payload, params), ...params },
   });
 };
 

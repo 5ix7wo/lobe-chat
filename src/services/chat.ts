@@ -173,6 +173,8 @@ class ChatService {
       options,
     );
 
+    console.log('createAssistantMessage, oaiMessages', oaiMessages);
+
     // ============  2. preprocess tools   ============ //
 
     const filterTools = toolSelectors.enabledSchema(enabledPlugins)(useToolStore.getState());
@@ -186,6 +188,11 @@ class ChatService {
     const shouldUseTools = filterTools.length > 0 && canUseFC;
 
     const tools = shouldUseTools ? filterTools : undefined;
+
+    console.log('createAssistantMessage, tools', tools);
+    console.log('createAssistantMessage, params', params);
+    console.log('createAssistantMessage, oaiMessages', oaiMessages);
+    console.log('createAssistantMessage, options', options);
 
     return this.getChatCompletion({ ...params, messages: oaiMessages, tools }, options);
   };
@@ -283,6 +290,11 @@ class ChatService {
 
       sdkType = providerConfig?.settings.sdkType || 'openai';
     }
+
+    console.log('getChatCompletion, providerConfig', providerConfig);
+    console.log('getChatCompletion, isBuiltin', isBuiltin);
+    console.log('getChatCompletion, sdkType', sdkType);
+    console.log('getChatCompletion, payload', JSON.stringify(payload));
 
     return fetchSSE(API_ENDPOINTS.chat(sdkType), {
       body: JSON.stringify(payload),

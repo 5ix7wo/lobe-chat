@@ -284,6 +284,9 @@ export const generateAIChat: StateCreator<
 
     const { model, provider, chatConfig } = getAgentConfig();
 
+    console.log('===> model=', model, ', provider=', provider, ', chatConfig=', chatConfig);
+    console.log('===> params=', params);
+
     let fileChunks: MessageSemanticSearchChunk[] | undefined;
     let ragQueryId;
 
@@ -386,12 +389,16 @@ export const generateAIChat: StateCreator<
 
     const compiler = template(chatConfig.inputTemplate, { interpolate: /{{([\S\s]+?)}}/g });
 
+    console.log('===> agentConfig=', agentConfig);
+
     // ================================== //
     //   messages uniformly preprocess    //
     // ================================== //
 
     // 1. slice messages with config
     let preprocessMsgs = chatHelpers.getSlicedMessagesWithConfig(messages, chatConfig, true);
+
+    console.log('===> preprocessMsgs=', preprocessMsgs);
 
     // 2. replace inputMessage template
     preprocessMsgs = !chatConfig.inputTemplate
@@ -427,6 +434,7 @@ export const generateAIChat: StateCreator<
     let thinkingStartAt: number;
     let duration: number;
 
+    // todo chenxiang, history summary
     const historySummary = topicSelectors.currentActiveTopicSummary(get());
     await chatService.createAssistantMessageStream({
       abortController,

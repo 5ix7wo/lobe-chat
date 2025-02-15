@@ -144,6 +144,7 @@ class AgentRuntime {
       github: Partial<ClientOptions>;
       google: { apiKey?: string; baseURL?: string };
       groq: Partial<ClientOptions>;
+      hackaigc: Partial<ClientOptions>;
       higress: Partial<ClientOptions>;
       huggingface: { apiKey?: string; baseURL?: string };
       hunyuan: Partial<ClientOptions>;
@@ -172,11 +173,18 @@ class AgentRuntime {
   ) {
     let runtimeModel: LobeRuntimeAI;
 
+    console.log('AgentRuntime.initializeWithProviderOptions, params', JSON.stringify(params), ', provider', provider);
+
     switch (provider) {
       default:
       case ModelProvider.OpenAI: {
         // Will use the openai as default provider
         runtimeModel = new LobeOpenAI(params.openai ?? (params as any)[provider]);
+        break;
+      }
+
+      case ModelProvider.HackAIGC: {
+        runtimeModel = new LobeOpenAI(params.hackaigc);
         break;
       }
 

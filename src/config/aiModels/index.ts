@@ -38,6 +38,7 @@ import { default as wenxin } from './wenxin';
 import { default as xai } from './xai';
 import { default as zeroone } from './zeroone';
 import { default as zhipu } from './zhipu';
+import { default as hackaigc } from './hackaigc';
 
 type ModelsMap = Record<string, AiFullModelCard[]>;
 
@@ -72,6 +73,7 @@ export const LOBE_DEFAULT_MODEL_LIST = buildDefaultModelList({
   github,
   google,
   groq,
+  hackaigc,
   higress,
   huggingface,
   hunyuan,
@@ -112,6 +114,7 @@ export { default as giteeai } from './giteeai';
 export { default as github } from './github';
 export { default as google } from './google';
 export { default as groq } from './groq';
+export { default as hackaigc } from './hackaigc';
 export { default as higress } from './higress';
 export { default as huggingface } from './huggingface';
 export { default as hunyuan } from './hunyuan';

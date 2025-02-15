@@ -172,7 +172,10 @@ export const createAiProviderSlice: StateCreator<
     useClientDataSWR<AiProviderRuntimeState | undefined>(
       !isDeprecatedEdition ? [AiProviderSwrKey.fetchAiProviderRuntimeState, isLogin] : null,
       async ([, isLogin]) => {
-        if (isLogin) return aiProviderService.getAiProviderRuntimeState();
+        
+        if (isLogin) {
+          // return aiProviderService.getAiProviderRuntimeState();
+        }
 
         const { LOBE_DEFAULT_MODEL_LIST } = await import('@/config/aiModels');
         return {
