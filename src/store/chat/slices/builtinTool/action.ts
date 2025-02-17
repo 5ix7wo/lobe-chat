@@ -12,6 +12,7 @@ import { ChatStore } from '@/store/chat/store';
 import { useFileStore } from '@/store/file';
 import { DallEImageItem } from '@/types/tool/dalle';
 import { setNamespace } from '@/utils/storeDebug';
+import { LOADING_FLAT } from '@/const/message';
 
 const n = setNamespace('tool');
 
@@ -60,16 +61,27 @@ export const chatToolSlice: StateCreator<
 
       if (!url) return;
 
-      await updateImageItem(messageId, (draft) => {
-        draft[index].previewUrl = url;
-      });
+      let imageFile: File;
 
-      toggleDallEImageLoading(messageId + params.prompt, false);
-      const imageFile = await uploadService.getImageFileByUrlWithCORS(
-        url,
-        `${originPrompt || params.prompt}_${index}.png`,
-      );
-
+      if (url.startsWith('data:image/png;base64,')) {
+        const base64 = url.split(',')[1];
+        const imageBuffer = Buffer.from(base64, 'base64');
+        imageFile = new File([imageBuffer], `${originPrompt || params.prompt}_${index}.png`, {
+          type: 'image/png',
+        });
+        toggleDallEImageLoading(messageId + params.prompt, false);
+      } else {
+        await updateImageItem(messageId, (draft) => {
+          draft[index].previewUrl = url;
+        });
+  
+        toggleDallEImageLoading(messageId + params.prompt, false);
+        imageFile = await uploadService.getImageFileByUrlWithCORS(
+          url,
+          `${originPrompt || params.prompt}_${index}.png`,
+        );
+      }
+      
       const data = await useFileStore.getState().uploadWithProgress({
         file: imageFile,
       });
@@ -99,7 +111,10 @@ export const chatToolSlice: StateCreator<
     const message = chatSelectors.getMessageById(id)(get());
     if (!message) return;
 
-    const data: DallEImageItem[] = JSON.parse(message.content);
+    let data: DallEImageItem[] = [ {} as DallEImageItem];
+    if (message.content !== LOADING_FLAT) {
+      data = JSON.parse(message.content);
+    }
 
     const nextContent = produce(data, updater);
     await get().internal_updateMessageContent(id, JSON.stringify(nextContent));

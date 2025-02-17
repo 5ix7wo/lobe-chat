@@ -19,9 +19,11 @@ import { useSessionStore } from '@/store/session';
 import { ChatMessage, CreateMessageParams, SendMessageParams } from '@/types/message';
 import { MessageSemanticSearchChunk } from '@/types/rag';
 import { setNamespace } from '@/utils/storeDebug';
+import { DallEImageItem } from '@/types/tool/dalle';
 
 import { chatSelectors, topicSelectors } from '../../../selectors';
 import { getAgentChatConfig, getAgentConfig, getAgentKnowledge } from './helpers';
+import { isHackText2ImageModel } from '@/config/hackaigcModelConfig';
 
 const n = setNamespace('ai');
 
@@ -386,10 +388,31 @@ export const generateAIChat: StateCreator<
 
     const agentConfig = getAgentConfig();
     const chatConfig = agentConfig.chatConfig;
+    const model = agentConfig.model;
 
     const compiler = template(chatConfig.inputTemplate, { interpolate: /{{([\S\s]+?)}}/g });
 
     console.log('===> agentConfig=', agentConfig);
+
+    // ================================== //
+    //   text2image preprocess            //
+    // ================================== //
+    if (isHackText2ImageModel(model)) {
+      const lastUserMessage = messages.findLast(m => m.role === 'user');
+      const lastUserContent = lastUserMessage?.content || '';
+      const imageParams = [
+        {
+          prompt: lastUserContent,
+        }
+      ] as DallEImageItem[];
+
+      await get().generateImageFromPrompts(imageParams, messageId);
+      internal_toggleChatLoading(false, messageId, n('generateMessage(end)') as string);
+      return {
+        isFunctionCall: false,
+        traceId: undefined,
+      }
+  }
 
     // ================================== //
     //   messages uniformly preprocess    //

@@ -13,6 +13,8 @@ import { DefaultMessage } from '../Default';
 import FileChunks from './FileChunks';
 import Thinking from './Reasoning';
 import ToolCall from './ToolCallItem';
+import HackImage from './ToolCallItem/HackImage';
+import { isHackText2ImageModel } from '@/config/hackaigcModelConfig';
 
 export const AssistantMessage = memo<
   ChatMessage & {
@@ -29,6 +31,9 @@ export const AssistantMessage = memo<
 
   const showReasoning = !!props.reasoning || (!props.reasoning && isReasoning);
 
+  const { extra } = props;
+  const isHackText2Image = isHackText2ImageModel(extra?.fromModel);
+
   return editing ? (
     <DefaultMessage
       content={content}
@@ -41,6 +46,7 @@ export const AssistantMessage = memo<
       {!!chunksList && chunksList.length > 0 && <FileChunks data={chunksList} />}
       {showReasoning && <Thinking {...props.reasoning} id={id} />}
       {content && (
+        isHackText2Image ? <HackImage {...{content, id, ...props}} /> :
         <DefaultMessage
           addIdOnDOM={false}
           content={content}

@@ -327,10 +327,45 @@ export const LobeOpenAICompatibleFactory = <T extends Record<string, any> = any>
       }
     }
 
+    async textToImage_backup(payload: TextToImagePayload) {
+      try {
+        console.log('textToImage payload:', JSON.stringify(payload));
+        const res = await this.client.images.generate(payload);
+        console.log('textToImage res:', JSON.stringify(res));
+        return res.data.map((o) => o.url) as string[];
+      } catch (error) {
+        throw this.handleError(error);
+      }
+    }
+
     async textToImage(payload: TextToImagePayload) {
       try {
-        const res = await this.client.images.generate(payload);
-        return res.data.map((o) => o.url) as string[];
+        console.log('textToImage payload:', JSON.stringify(payload));
+
+        // 构建 dezgo API 请求参数
+        const formData = new FormData();
+        formData.append('prompt', payload.prompt);
+
+        // 发送请求到 dezgo API
+        const response = await fetch(process.env.HACKAIGC_TEXT_TO_IMAGE_BASE_URL as string, {
+          body: formData,
+          headers: {
+            'X-Dezgo-Key': process.env.HACKAIGC_TEXT_TO_IMAGE_API_KEY as string,
+          },
+          method: 'POST',
+        });
+
+        if (!response.ok) {
+          throw new Error(`Text to Image API error: ${response.statusText}`);
+        }
+
+        // 获取二进制数据并转换为 base64
+        const imageBuffer = await response.arrayBuffer();
+        const base64 = Buffer.from(imageBuffer).toString('base64');
+        const imageUrl = `data:image/png;base64,${base64}`;
+
+        // 保持与原接口一致的返回格式
+        return [imageUrl];
       } catch (error) {
         throw this.handleError(error);
       }

@@ -1,10 +1,18 @@
+/* eslint-disable typescript-sort-keys/string-enum */
 /* eslint-disable sort-keys-fix/sort-keys-fix , typescript-sort-keys/interface */
 
+// 添加 HackAIGCModel 枚举
+export enum HackModelId {
+  UNCENSORED_CHAT = 'hackaigc/uncensored-chat',
+  NSFW_CHAT = 'hackaigc/nsfw-chat',
+  UNCENSORED_TEXT2IMAGE = 'hackaigc/uncensored-text2image',
+}
+
 const hackModelConfig = {
-  "hackaigc/uncensored": {
+  [HackModelId.UNCENSORED_CHAT]: {
     baseURL: process.env.HACKAIGC_UNCENSORED_BASE_URL,
     apiKey: process.env.HACKAIGC_UNCENSORED_API_KEY,
-    model: process.env.HACKAIGC_UNCENSORED_MODEL,
+    realModel: process.env.HACKAIGC_UNCENSORED_MODEL,
   },
 }
 
@@ -15,11 +23,15 @@ export const getHackRealModel = (model: string) => {
   if (!model.includes('hackaigc')) {
     return model;
   }
-  return hackModelEnv[model].model as string;
+  return hackModelEnv[model].realModel as string;
 }
 
 export const getHackModelOptions = (model: string) => {
   const options = hackModelEnv[model];
   const { baseURL, apiKey } = options;
   return { baseURL, apiKey };
+}
+
+export const isHackText2ImageModel = (model: string | undefined) => {
+  return model === HackModelId.UNCENSORED_TEXT2IMAGE;
 }
