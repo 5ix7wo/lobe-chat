@@ -21,6 +21,7 @@ import thread from './thread';
 import tool from './tool';
 import topic from './topic';
 import welcome from './welcome';
+import subscription from './subscription';
 
 const resources = {
   auth,
@@ -42,6 +43,7 @@ const resources = {
   providers,
   ragEval,
   setting,
+  subscription,
   thread,
   tool,
   topic,

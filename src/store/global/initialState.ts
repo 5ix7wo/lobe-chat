@@ -38,6 +38,11 @@ export enum ProfileTabs {
   Stats = 'stats',
 }
 
+export enum SubscriptionTabs {
+  Billing = 'billing',
+  Pricing = 'pricing',
+}
+
 export interface SystemStatus {
   // which sessionGroup should expand
   expandSessionGroupKeys: string[];
