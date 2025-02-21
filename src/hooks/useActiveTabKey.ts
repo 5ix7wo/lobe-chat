@@ -1,7 +1,7 @@
 import { usePathname } from 'next/navigation';
 
 import { useQuery } from '@/hooks/useQuery';
-import { ProfileTabs, SettingsTabs, SidebarTabKey } from '@/store/global/initialState';
+import { ProfileTabs, SettingsTabs, SidebarTabKey, SubscriptionTabs } from '@/store/global/initialState';
 
 /**
  * Returns the active tab key (chat/market/settings/...)
@@ -10,6 +10,22 @@ export const useActiveTabKey = () => {
   const pathname = usePathname();
 
   return pathname.split('/').find(Boolean)! as SidebarTabKey;
+};
+
+/**
+ * Returns the active subscription page key (pricing/billing/...)
+ */
+export const useActiveSubscriptionKey = () => {
+  const pathname = usePathname();
+  const { tab } = useQuery();
+
+  const tabs = pathname.split('/').at(-1);
+
+  if (tabs === 'subscription') return SubscriptionTabs.Pricing;
+
+  if (tabs === 'modal') return tab as SubscriptionTabs;
+
+  return tabs as SubscriptionTabs;
 };
 
 /**
