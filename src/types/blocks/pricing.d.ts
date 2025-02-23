@@ -30,6 +30,7 @@ export interface PricingItem {
   credits?: number;
   valid_months?: number;
   group?: string;
+  is_popular?: boolean;
 }
 
 export interface Pricing {

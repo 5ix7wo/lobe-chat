@@ -1,6 +1,12 @@
 /* eslint-disable typescript-sort-keys/string-enum */
 /* eslint-disable sort-keys-fix/sort-keys-fix , typescript-sort-keys/interface */
 
+export enum HackVipLevel {
+  HOBBY = 'hobby',
+  PREMIUM = 'premium',
+  ULTIMATE = 'ultimate',
+}
+
 // 添加 HackAIGCModel 枚举
 export enum HackModelId {
   UNCENSORED_CHAT = 'hackaigc/uncensored-chat',
