@@ -18,6 +18,13 @@ config.rules['unicorn/catch-error-name'] = 0;
 config.rules['unicorn/no-array-for-each'] = 0;
 config.rules['unicorn/prefer-number-properties'] = 0;
 
+config.rules['typescript-sort-keys/interface'] = 0;
+config.rules['typescript-sort-keys/string-enum'] = 0;
+config.rules['typescript-sort-keys/type'] = 0;
+config.rules['typescript-sort-keys/variable'] = 0;
+config.rules['sort-keys-fix/sort-keys-fix'] = 0;
+config.rules['@typescript-eslint/no-use-before-define'] = 0;
+
 config.overrides = [
   {
     extends: ['plugin:mdx/recommended'],
