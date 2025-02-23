@@ -96,7 +96,7 @@ export default function Pricing() {
 
       setIsLoading(true);
 
-      const response = await fetch("/api/checkout", {
+      const response = await fetch("/webapi/checkout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

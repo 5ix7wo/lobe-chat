@@ -26,7 +26,7 @@ const username = (s: UserStore) => {
 export const userProfileSelectors = {
   nickName,
   userAvatar: (s: UserStore): string => s.user?.avatar || '',
-  userId: (s: UserStore) => s.user?.id,
+  userId: (s: UserStore): string | undefined => s.user?.id,
   userProfile: (s: UserStore): LobeUser | null | undefined => s.user,
   username,
 };
@@ -49,4 +49,5 @@ export const authSelectors = {
   isLoginWithAuth: (s: UserStore) => s.isSignedIn,
   isLoginWithClerk: (s: UserStore): boolean => (s.isSignedIn && enableClerk) || false,
   isLoginWithNextAuth: (s: UserStore): boolean => (s.isSignedIn && !!s.enabledNextAuth) || false,
+  getUser: (s: UserStore): LobeUser | null | undefined => s.user,
 };
