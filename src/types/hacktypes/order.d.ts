@@ -1,8 +1,7 @@
-/* eslint-disable typescript-sort-keys/interface */
 export interface Order {
-  order_no: string;
+  id: string;
   created_at: string;
-  user_uuid: string;
+  user_id: string;
   user_email: string;
   amount: number;
   interval: string;
@@ -24,4 +23,5 @@ export interface Order {
   paid_at?: string;
   paid_email?: string;
   paid_detail?: string;
+  stripe_customer_id?: string;
 }

@@ -1,4 +1,4 @@
-import { Order } from "@/types/order";
+import { Order } from "@/types/hacktypes/order";
 import { getSupabaseClient } from "@/store/hackmodels/db";
 
 export enum OrderStatus {
@@ -18,14 +18,14 @@ export async function insertOrder(order: Order) {
   return data;
 }
 
-export async function findOrderByOrderNo(
-  order_no: string
+export async function findOrderByOrderId(
+  order_id: string
 ): Promise<Order | undefined> {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("orders")
     .select("*")
-    .eq("order_no", order_no)
+    .eq("id", order_id)
     .single();
 
   if (error) {
@@ -35,14 +35,14 @@ export async function findOrderByOrderNo(
   return data;
 }
 
-export async function getFirstPaidOrderByUserUuid(
-  user_uuid: string
+export async function getFirstPaidOrderByUserId(
+  user_id: string
 ): Promise<Order | undefined> {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("orders")
     .select("*")
-    .eq("user_uuid", user_uuid)
+    .eq("user_id", user_id)
     .eq("status", "paid")
     .order("created_at", { ascending: true })
     .limit(1)
@@ -76,7 +76,7 @@ export async function getFirstPaidOrderByUserEmail(
 }
 
 export async function updateOrderStatus(
-  order_no: string,
+  order_id: string,
   status: string,
   paid_at: string,
   paid_email: string,
@@ -86,7 +86,7 @@ export async function updateOrderStatus(
   const { data, error } = await supabase
     .from("orders")
     .update({ status, paid_at, paid_detail, paid_email })
-    .eq("order_no", order_no);
+    .eq("id", order_id);
 
   if (error) {
     throw error;
@@ -96,7 +96,7 @@ export async function updateOrderStatus(
 }
 
 export async function updateOrderSession(
-  order_no: string,
+  order_id: string,
   stripe_session_id: string,
   order_detail: string
 ) {
@@ -104,7 +104,7 @@ export async function updateOrderSession(
   const { data, error } = await supabase
     .from("orders")
     .update({ stripe_session_id, order_detail })
-    .eq("order_no", order_no);
+    .eq("id", order_id);
 
   if (error) {
     throw error;
@@ -114,7 +114,7 @@ export async function updateOrderSession(
 }
 
 export async function updateOrderSubscription(
-  order_no: string,
+  order_id: string,
   sub_id: string,
   sub_interval_count: number,
   sub_cycle_anchor: number,
@@ -141,7 +141,7 @@ export async function updateOrderSubscription(
       paid_email,
       paid_detail,
     })
-    .eq("order_no", order_no);
+    .eq("id", order_id);
 
   if (error) {
     throw error;

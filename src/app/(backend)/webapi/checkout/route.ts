@@ -1,10 +1,9 @@
 import { getUserAuth } from '@/utils/server/auth';
 import { respData, respErr } from "@/libs/resp";
 import { insertOrder, updateOrderSession } from "@/store/hackmodels/order";
-import { Order } from "@/types/order";
+import { Order } from "@/types/hacktypes/order";
 import Stripe from "stripe";
-import { getSnowId } from "@/libs/hash";
-
+import { idGenerator } from "@/database/utils/idGenerator";
 
 export async function POST(req: Request) {
   try {
@@ -21,7 +20,6 @@ export async function POST(req: Request) {
     }
 
     console.log("userId", userId, "user_email", user_email);
-
 
     let {
       credits,
@@ -59,8 +57,6 @@ export async function POST(req: Request) {
       return respErr("invalid valid_months");
     }
 
-    const order_no = getSnowId();
-
     const currentDate = new Date();
     const created_at = currentDate.toISOString();
 
@@ -81,11 +77,12 @@ export async function POST(req: Request) {
     const newDate = new Date(newTimeMillis);
 
     expired_at = newDate.toISOString();
+    const order_id = idGenerator('orders');
 
     const order: Order = {
-      order_no: order_no,
+      id: order_id,
       created_at: created_at,
-      user_uuid: userId,
+      user_id: userId,
       user_email: user_email,
       amount: amount,
       interval: interval,
@@ -124,10 +121,10 @@ export async function POST(req: Request) {
       metadata: {
         project: process.env.NEXT_PUBLIC_PROJECT_NAME || "",
         product_name: product_name,
-        order_no: order_no.toString(),
+        order_id: order_id.toString(),
         user_email: user_email,
         credits: credits,
-        user_uuid: userId,
+        user_id: userId,
       },
       mode: is_subscription ? "subscription" : "payment",
       success_url: `${process.env.APP_URL}/pay-success/{CHECKOUT_SESSION_ID}`,
@@ -159,11 +156,11 @@ export async function POST(req: Request) {
     const session = await stripe.checkout.sessions.create(options);
 
     const stripe_session_id = session.id;
-    await updateOrderSession(order_no, stripe_session_id, order_detail);
+    await updateOrderSession(order_id, stripe_session_id, order_detail);
 
     return respData({
       public_key: process.env.STRIPE_PUBLIC_KEY,
-      order_no: order_no,
+      order_id: order_id,
       session_id: stripe_session_id,
     });
   } catch (e: any) {
